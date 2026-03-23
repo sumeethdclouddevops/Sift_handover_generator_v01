@@ -542,105 +542,59 @@ function copyToClipboard() {
     const htmlContent = document.getElementById('outputContent').innerHTML;
     const btn = event.target;
 
-    // Create properly formatted HTML document
-    const fullHTML = `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARE Handover Report</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        td, th { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
-            text-align: left; 
-        }
-        th { 
-            background-color: #4a9eff; 
-            color: white;
-            font-weight: 600;
-        }
-        tr:nth-child(even) { 
-            background-color: #f9f9f9; 
-        }
-        tr:hover {
-            background-color: #f0f7ff;
-        }
-        h3 { 
-            color: #4a9eff; 
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #4a9eff;
-            padding-bottom: 10px;
-        }
-        h4 { 
-            margin-top: 15px;
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 14px;
-        }
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-        }
-        .footer p {
-            margin: 5px 0;
-        }
-        .footer a {
-            color: #4a9eff;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
+    // Create HTML with proper markup for rich text
+    const richHTML = `<html>
 <body>
-    <div class="container">
-        ${htmlContent}
-    </div>
+<!--StartFragment-->${htmlContent}<!--EndFragment-->
 </body>
 </html>`;
 
-    // Copy to clipboard using multiple methods for better compatibility
-    navigator.clipboard.writeText(fullHTML).then(() => {
+    // Try modern Clipboard API with HTML mime type
+    if (navigator.clipboard && navigator.clipboard.write) {
+        const blob = new Blob([richHTML], { type: 'text/html' });
+        const data = [new ClipboardItem({ 'text/html': blob })];
+        
+        navigator.clipboard.write(data).then(() => {
+            btn.textContent = '✓ Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = '📋 Copy Report to Clipboard';
+                btn.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            // Fallback to text copy
+            copyAsText(htmlContent, btn);
+        });
+    } else {
+        // Fallback for browsers without Clipboard API
+        copyAsText(htmlContent, btn);
+    }
+}
+
+function copyAsText(htmlContent, btn) {
+    // For maximum compatibility, use a different approach
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    
+    // Copy the rendered content as rich text
+    const range = document.createRange();
+    range.selectNodeContents(tempDiv);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    try {
+        document.execCommand('copy');
         btn.textContent = '✓ Copied!';
         btn.classList.add('copied');
         setTimeout(() => {
             btn.textContent = '📋 Copy Report to Clipboard';
             btn.classList.remove('copied');
         }, 2000);
-    }).catch(err => {
-        // Fallback for older browsers
+    } catch (err) {
+        // Last resort: use textarea method
         const textarea = document.createElement('textarea');
-        textarea.value = fullHTML;
+        textarea.innerHTML = htmlContent;
         textarea.style.position = 'fixed';
         textarea.style.opacity = '0';
         document.body.appendChild(textarea);
@@ -654,5 +608,7 @@ function copyToClipboard() {
             btn.textContent = '📋 Copy Report to Clipboard';
             btn.classList.remove('copied');
         }, 2000);
-    });
+    }
+    
+    window.getSelection().removeAllRanges();
 }
