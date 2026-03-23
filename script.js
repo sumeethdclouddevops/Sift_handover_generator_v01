@@ -119,7 +119,7 @@ function setupEventListeners() {
     
     document.getElementById('currentShift').addEventListener('change', updateShiftTimes);
     document.getElementById('previousShiftAgent').addEventListener('change', updatePreviousShiftTime);
-    document.getElementById('handoverAgent').addEventListener('change', updateNextShift);
+    document.getElementById('nextShiftAgent').addEventListener('change', updateNextShift);
 }
 
 function updateShiftTimes() {
@@ -143,7 +143,7 @@ function updateNextShift() {
     const currentIndex = SHIFT_ORDER.indexOf(currentShift);
     const nextIndex = (currentIndex + 1) % SHIFT_ORDER.length;
     const nextShift = SHIFTS[SHIFT_ORDER[nextIndex]];
-    document.getElementById('nextShift').textContent = `${nextShift.name} (${nextShift.startIST} - ${nextShift.endIST})`;
+    document.getElementById('nextShiftTime').textContent = `${nextShift.name} (${nextShift.startIST} - ${nextShift.endIST})`;
 }
 
 // ==================== Task Management ====================
@@ -256,11 +256,11 @@ function generateOutput(e) {
     const generatorAgent = document.getElementById('generatorAgent').value;
     const currentShift = document.getElementById('currentShift').value;
     const previousShiftAgent = document.getElementById('previousShiftAgent').value;
-    const handoverAgent = document.getElementById('handoverAgent').value;
+    const nextShiftAgent = document.getElementById('nextShiftAgent').value;
     const extraNotes = document.getElementById('extraNotes').value;
 
-    if (!generatorAgent || !currentShift || !previousShiftAgent || !handoverAgent) {
-        alert('Please fill in all required fields: Generator, Current Shift, Previous Shift Agent, and Handover Agent');
+    if (!generatorAgent || !currentShift || !previousShiftAgent || !nextShiftAgent) {
+        alert('Please fill in all required fields: Generator, Current Shift, Previous Shift Agent, and Next Shift Agent');
         return;
     }
 
@@ -408,7 +408,7 @@ function generateOutput(e) {
     const nextShiftData = SHIFTS[SHIFT_ORDER[nextIndex]];
     const handoverTasks = Array.from(document.querySelectorAll('#handoverTasksList .task-item'));
 
-    htmlOutput += `<h3 style="color: #4a9eff; margin-top: 20px; font-size: 16px; border-bottom: 2px solid #4a9eff; padding-bottom: 10px;">HANDOVER TO NEXT SHIFT - <span style="font-size: 15px;">${handoverAgent.toUpperCase()}</span></h3>
+    htmlOutput += `<h3 style="color: #4a9eff; margin-top: 20px; font-size: 16px; border-bottom: 2px solid #4a9eff; padding-bottom: 10px;">HANDOVER TO NEXT SHIFT - <span style="font-size: 15px;">${nextShiftAgent.toUpperCase()}</span></h3>
         <p style="padding: 10px;"><strong>Next Shift:</strong> ${nextShiftData.name} (${nextShiftData.startIST} - ${nextShiftData.endIST})</p>`;
 
     if (handoverTasks.length > 0) {
