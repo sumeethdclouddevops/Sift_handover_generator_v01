@@ -87,42 +87,50 @@ body {
 .checkbox-toggle input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
-    width: 50px;
-    height: 28px;
+    width: 56px;
+    height: 32px;
     background-color: var(--input-bg);
     border: 2px solid var(--input-border);
-    border-radius: 20px;
+    border-radius: 24px;
     cursor: pointer;
     outline: none;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .checkbox-toggle input[type="checkbox"]::before {
     content: '';
     position: absolute;
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background-color: var(--text-secondary);
-    top: 1px;
-    left: 1px;
-    transition: all 0.3s ease;
+    top: 2px;
+    left: 2px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .checkbox-toggle input[type="checkbox"]:hover {
     border-color: var(--accent-color);
-    box-shadow: 0 0 8px rgba(74, 158, 255, 0.3);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 12px rgba(74, 158, 255, 0.4);
+}
+
+.checkbox-toggle input[type="checkbox"]:active {
+    border-color: var(--accent-color);
 }
 
 .checkbox-toggle input[type="checkbox"]:checked {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .checkbox-toggle input[type="checkbox"]:checked::before {
-    left: 25px;
+    left: 28px;
     background-color: white;
+    box-shadow: 0 2px 4px rgba(74, 158, 255, 0.4);
 }
 
 .checkbox-toggle label {
@@ -131,6 +139,7 @@ body {
     font-size: 0.9em;
     color: var(--text-secondary);
     font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 /* Container Styles */
